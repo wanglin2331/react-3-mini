@@ -3,6 +3,7 @@ import logo from './mainStreetAuto.svg';
 import axios from 'axios';
 import './App.css';
 
+
 // Toast notification dependencies
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -28,10 +29,29 @@ class App extends Component {
     this.deleteBuyer = this.deleteBuyer.bind( this );
   }
 
+
+
+
+///////////////////////////////////////problem 1
   getVehicles() {
+    axios({
+      method: 'GET',
+      url: "https://joes-autos.herokuapp.com/api/vehicles"
+    }).then (response => {                        //then if successful
+     //console.log("response",response)
+      this.setState({vehiclesToDisplay: response.data});
+      toast.success("Got vehicles!");         //green bar pop on the right
+    })
+    .catch(error =>{                              //catch if error
+      toast.error("this was the error",error)
+    })
     // axios (GET)
     // setState with response -> vehiclesToDisplay
   }
+
+
+
+
 
   getPotentialBuyers() {
     // axios (GET)
@@ -39,6 +59,18 @@ class App extends Component {
   }
 
   sellCar( id ) {
+    axios({
+      method: 'DELETE',
+      url: "https://joes-autos.herokuapp.com/api/vehicles"+"/"+id
+    }).then (response => {
+      this.setState({vehiclesToDisplay: response.data.vehicles});
+      toast.success("Sold car!");
+    })
+    .catch(error =>{
+      toast.error("Failed to sell the car!")
+    })
+      //this.setState({vehiclesToDisplay: resonse.data})
+    
     // axios (DELETE)
     // setState with response -> vehiclesToDisplay
   }
@@ -57,11 +89,25 @@ class App extends Component {
     // setState with response -> vehiclesToDisplay
   }
 
+  ///////////////////////////Problem 2/////////////////
   updatePrice( priceChange, id ) {
+    axios({
+      method: "PUT",
+      url: "https://joes-autos.herokuapp.com/api/vehicles"+"/"+id+"/"+priceChange
+    }).then(response => {
+      this.setState({vehiclesToDisplay: response.data.vehicles});
+      toast.success("Successfully updated vehicle price");
+    })
+    .catch(error =>{
+      toast.error("Error with Request");
+    });
+     
     // axios (PUT)
     // setState with response -> vehiclesToDisplay
   }
 
+
+  //////////////////////////////Problem 3////////////////////////////
   addCar() {
     let newCar = {
       make: this.refs.make.value,
@@ -71,9 +117,25 @@ class App extends Component {
       price: this.refs.price.value
     };
 
+    axios({
+      methods: 'POST',
+      url: "https://joes-autos.herokuapp.com/api/vehicles",
+      data: newCar
+    }).then (response => {
+      console.log("this is response",response)
+      this.setState({vehiclesToDisplay: response.data});
+      toast.success("Successfully add vehicle");
+    }).catch(error =>{
+      toast.error("failed to add vehicle");
+    })
     // axios (POST)
     // setState with response -> vehiclesToDisplay
   }
+
+
+
+
+
 
   addBuyer() {
     let newBuyer ={
